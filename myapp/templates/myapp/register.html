@@ -1,0 +1,31 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+{% block title %}Регистрация{% endblock %}
+
+<div class="card-common">
+    <div class="card-header-common">
+        <h2>Регистрация</h2>
+    </div>
+    <div class="card-body-common">
+        <form method="post" class="form-common">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}" />
+
+            <div class="form-error">{{ form.non_field_errors }}</div>
+
+            {% for f in form %}
+            <div class="form-group">
+                <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                <div class="form-input">{{ f }}</div>
+                <div class="form-error">{{ f.errors }}</div>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-submit-common">Регистрация</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

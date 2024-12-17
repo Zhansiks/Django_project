@@ -1,0 +1,22 @@
+{% extends 'myapp/base.html' %}  
+{% load static %}  
+
+{% block title %}Создание объявления{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h2 class="page-title">Создание нового объявления</h2>
+    <hr class="divider">
+</div>
+    <link rel="stylesheet" href="{% static 'myapp/css/styles.css' %}">
+    
+    
+    
+    <div class="pattern-form-container"> 
+        <form method="post" enctype="multipart/form-data" class="pattern-styled-form"> 
+            {% csrf_token %}
+            {{ form.as_p }} 
+            <button type="submit" class="pattern-submit-btn">Отправить</button> 
+        </form>
+    </div>
+{% endblock %}

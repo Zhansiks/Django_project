@@ -1,0 +1,85 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<h2>{{ detail.title }}</h2>
+<p>{{ detail.description }}</p>
+<p>Цена: {{ detail.price }} тг.</p>
+<img src="{{ detail.image.url }}" alt="{{ detail.title }}" style="width:300px;height:auto;">
+<p>Средний рейтинг: {{ detail.average_rating|floatformat:1 }}</p>
+
+<!-- Отображение рейтинга в виде звезд -->
+<div class="rating">
+    {% for i in "12345"|make_list %}
+        <i class="fa{% if i <= detail.average_rating|floatformat:0 %} fa-star{% else %} fa-star-o{% endif %}"></i>
+    {% endfor %}
+</div>
+
+<!-- Форма для выставления оценки -->
+<form method="post">
+    {% csrf_token %}
+    <label for="rating">Оцените объявление:</label>
+    <select name="rating" id="rating">
+        <option value="1" {% if user_rating and user_rating.score == 1 %}selected{% endif %}>1</option>
+        <option value="2" {% if user_rating and user_rating.score == 2 %}selected{% endif %}>2</option>
+        <option value="3" {% if user_rating and user_rating.score == 3 %}selected{% endif %}>3</option>
+        <option value="4" {% if user_rating and user_rating.score == 4 %}selected{% endif %}>4</option>
+        <option value="5" {% if user_rating and user_rating.score == 5 %}selected{% endif %}>5</option>
+    </select>
+    <button type="submit">Оценить</button>
+</form>
+
+{% if user.is_authenticated %}
+<h3>Оставить комментарий:</h3>
+<form method="post" action=".">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+</form>
+{% else %}
+<p>Пожалуйста, <a href="{% url 'myapp:home' %}">войдите</a>, чтобы оставить комментарий.</p>
+{% endif %}
+
+<h3>Комментарии:</h3>
+<div>
+    {% for comment in comments %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ comment.user.username }}</h5>
+                <p class="card-text">{{ comment.text }}</p>
+                <p class="card-footer text-muted">
+                    Добавлено {{ comment.created_at|date:"d M Y H:i" }}
+                    
+                    {% if comment.user == request.user or request.user.is_staff %}
+                        <form action="{% url 'myapp:delete_comment' comment_id=comment.id pattern_id=detail.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                        </form>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% empty %}
+        <p>Пока нет комментариев.</p>
+    {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+    <form action="{% url 'myapp:delete_board' pattern_id=detail.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Удалить</button>
+    </form>
+{% endif %}
+<form method="post" action="{% url 'myapp:add_favorite' detail.id %}" style="display:inline;">
+    {% csrf_token %}
+    {% if detail.is_favorite %}
+        <button type="submit" class="btn btn-success">Добавлено в Избранное</button>
+    {% else %}
+        <button type="submit" class="btn btn-warning">Добавить в Избранное</button>
+    {% endif %}
+</form>
+
+<a href="{% url 'myapp:list' %}" class="btn btn-secondary">Назад к списку</a>
+<a href="{% url 'myapp:edit' detail.id %}" class="btn-delete">Изменить проект</a>
+{% endblock %}

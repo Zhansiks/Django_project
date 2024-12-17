@@ -1,0 +1,20 @@
+{% extends 'myapp/base.html' %}  
+{% load static %}  
+
+{% block title %}Редактирование проекта{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'myapp/css/styles.css' %}"> 
+    
+    <h1 class="pattern-form-title">Редактировать объявление: {{ pattern.title }}</h1> 
+    
+    <div class="pattern-form-container"> 
+        <form method="post" enctype="multipart/form-data" class="pattern-styled-form"> 
+            {{ form.as_p }} 
+            {% csrf_token %}
+            <button type="submit" class="pattern-submit-btn">Сохранить изменения</button> 
+        </form>
+
+        <a href="{% url 'myapp:list' %}" class="detail-button">Отмена</a>
+    </div>
+{% endblock %}

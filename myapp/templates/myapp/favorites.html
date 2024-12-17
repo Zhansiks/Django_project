@@ -1,0 +1,28 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<h2>Избранные объявления</h2>
+
+{% if favorites %}
+    <ul>
+        {% for favorite in favorites %}
+            <li>
+                <h3>{{ favorite.ad.title }}</h3>
+                <p>{{ favorite.ad.description }}</p>
+                <p>Цена: {{ favorite.ad.price }} тг.</p>
+                <img src="{{ favorite.ad.image.url }}" alt="{{ favorite.ad.title }}" style="width:300px;height:auto;">
+                <a href="{% url 'myapp:detail_board' favorite.ad.id %}">Посмотреть объявление</a>
+                
+                <!-- Форма для удаления из избранного -->
+                <form action="{% url 'myapp:remove_from_favorites' favorite.id %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Удалить из избранных</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У вас пока нет избранных объявлений.</p>
+{% endif %}
+{% endblock %}
+

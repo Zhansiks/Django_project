@@ -1,0 +1,46 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Список объявлений</h2>
+
+<div class="card-container">
+    {% for notice in page_obj.object_list %}
+        <div class="card">
+            {% if notice.image %}
+                <img src="{{ notice.image.url }}" alt="{{ notice.title }}" class="card-image">
+            {% else %}
+                <img src="{% static 'myapp/images/default.png' %}" alt="Нет изображения" class="card-image">
+            {% endif %}
+            <div class="card-content">
+                <h3 class="card-title">{{ notice.title }}</h3>
+                <p class="card-description">{{ notice.description|truncatewords:20 }}</p>
+                <p class="card-price">Цена: {{ notice.price }} тг.</p>
+                <div class="card-button-container">
+                    <a href="{% url 'myapp:detail_board' notice.id %}" class="detail-button">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="pagination-container">
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&search={{ request.GET.search }}" class="page-link">&laquo;</a>
+                <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}" class="page-link">&larr;</a>
+            {% endif %}
+
+            <span class="current-page">
+                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}" class="page-link">&rarr;</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}" class="page-link">&raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endblock %}

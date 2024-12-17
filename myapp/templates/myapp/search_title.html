@@ -1,0 +1,30 @@
+{% extends 'myapp/base.html' %}  
+
+{% block content %}
+{% block title %}Поиск{% endblock %}
+
+<form method="get" action="{% url 'myapp:search_title' %}">
+    {{ form.as_p }}
+    <button type="submit">Поиск</button>
+</form>
+
+<h2>Результаты поиска:</h2>
+{% if notices %}
+    <ul>
+        {% for notice in notices %}
+            <li>
+                <h3>{{ notice.title }}</h3>
+                <p>{{ notice.description }}</p>
+                {% if notice.image %}
+                    <img src="{{ notice.image.url }}" alt="Изображение">
+                {% endif %}
+                <p>Цена: {{ notice.price }} тг.</p>
+                <p>Дата публикации: {{ notice.published_date }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Нет объявлений, соответствующих вашему запросу.</p>
+{% endif %}
+
+{% endblock %}
